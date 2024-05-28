@@ -44,7 +44,7 @@ def display_pdf(file):
 
 
 with st.sidebar:
-    st.header(f"Add your documents!")
+    st.header(f"Add your PDFs!")
 
     uploaded_files = st.file_uploader("Choose your `.pdf` file", type="pdf", accept_multiple_files=True)
 
@@ -57,7 +57,7 @@ with st.sidebar:
                         f.write(uploaded_file.getvalue())
 
                 file_key = f"{session_id}-{uploaded_file.name}"
-                st.write("Indexing your document...")
+                st.write("Indexing your pdf...")
 
                 if file_key not in st.session_state.get('file_cache', {}):
 
@@ -114,7 +114,7 @@ with st.sidebar:
 col1, col2 = st.columns([6, 1])
 
 with col1:
-    st.header(f"Chat with Docs using Llama-3")
+    st.header(f"Chat with PDFs using Llama-3")
 
 with col2:
     st.button("Clear ↺", on_click=reset_chat)
