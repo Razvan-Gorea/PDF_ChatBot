@@ -3,9 +3,8 @@ import base64
 import gc
 import random
 import tempfile
-import time
 import uuid
-import pandas as pd  # Import pandas for CSV handling
+import pandas as pd
 
 from IPython.display import Markdown, display
 from llama_index.core import Settings
@@ -29,12 +28,13 @@ def reset_chat():
     gc.collect()
 
 def display_csv(file):
-    # Assuming the CSV file is read into a DataFrame, display its contents
+    # Opening file from file path
+    st.markdown("### CSV Preview")
     df = pd.read_csv(file)
-    st.dataframe(df)
+    st.write(df)
 
 with st.sidebar:
-    st.header(f"Add your documents!")
+    st.header(f"Add your CSVs!")
 
     uploaded_files = st.file_uploader("Choose your `.csv` file", type="csv", accept_multiple_files=True)
 
@@ -43,14 +43,14 @@ with st.sidebar:
             with tempfile.TemporaryDirectory() as temp_dir:
                 for uploaded_file in uploaded_files:
                     file_path = os.path.join(temp_dir, uploaded_file.name)
-
-                with open(file_path, "wb") as f:
-                    f.write(uploaded_file.getvalue())
+                    with open(file_path, "wb") as f:
+                        f.write(uploaded_file.getvalue())
 
                 file_key = f"{session_id}-{uploaded_file.name}"
-                st.write("Processing your document...")
+                st.write("Indexing your csv...")
 
                 if file_key not in st.session_state.get('file_cache', {}):
+
                     if os.path.exists(temp_dir):
                         loader = SimpleDirectoryReader(
                             input_dir=temp_dir,
@@ -74,7 +74,7 @@ with st.sidebar:
                     Settings.llm = llm
                     query_engine = index.as_query_engine(streaming=True)
 
-                    # Customize prompt template
+                    # ====== Customise prompt template ======
                     qa_prompt_tmpl_str = (
                         "Context information is below.\n"
                         "---------------------\n"
@@ -104,7 +104,7 @@ with st.sidebar:
 col1, col2 = st.columns([6, 1])
 
 with col1:
-    st.header(f"Chat with your CSVs!")
+    st.header(f"Chat with CSVs using Llama-3")
 
 with col2:
     st.button("Clear ↺", on_click=reset_chat)
@@ -139,7 +139,6 @@ if prompt := st.chat_input("What's up?"):
             message_placeholder.markdown(full_response + "▌")
 
         message_placeholder.markdown(full_response)
-        # st.session_state.context = ctx
 
     # Add assistant response to chat history
     st.session_state.messages.append({"role": "assistant", "content": full_response})
