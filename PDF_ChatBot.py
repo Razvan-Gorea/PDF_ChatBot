@@ -1,11 +1,8 @@
-# Adapted from https://docs.streamlit.io/knowledge-base/tutorials/build-conversational-apps#build-a-simple-chatbot-gui-with-streaming
 import os
-
 import base64
 import gc
 import random
 import tempfile
-import time
 import uuid
 
 from IPython.display import Markdown, display
@@ -39,8 +36,7 @@ def display_pdf(file):
 
     # Embedding PDF in HTML
     pdf_display = f"""<iframe src="data:application/pdf;base64,{base64_pdf}" width="400" height="100%" type="application/pdf"
-                        style="height:100vh; width:100%"
-                    >
+                        style="height:100vh; width:100%">
                     </iframe>"""
 
     # Displaying File
@@ -57,9 +53,8 @@ with st.sidebar:
             with tempfile.TemporaryDirectory() as temp_dir:
                 for uploaded_file in uploaded_files:
                     file_path = os.path.join(temp_dir, uploaded_file.name)
-
-                with open(file_path, "wb") as f:
-                    f.write(uploaded_file.getvalue())
+                    with open(file_path, "wb") as f:
+                        f.write(uploaded_file.getvalue())
 
                 file_key = f"{session_id}-{uploaded_file.name}"
                 st.write("Indexing your document...")
@@ -153,10 +148,9 @@ if prompt := st.chat_input("What's up?"):
             full_response += chunk
             message_placeholder.markdown(full_response + "▌")
 
-        # full_response = query_engine.query(prompt)
-
         message_placeholder.markdown(full_response)
         # st.session_state.context = ctx
 
     # Add assistant response to chat history
     st.session_state.messages.append({"role": "assistant", "content": full_response})
+
